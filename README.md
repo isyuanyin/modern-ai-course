@@ -1,1 +1,1 @@
-# morden-ai-course
+# 现代人工智能技术课程
