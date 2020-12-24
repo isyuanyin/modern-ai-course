@@ -187,8 +187,11 @@ if __name__ == '__main__':
     memory = ReplayMemory(MEMORY_SIZE)
     
     # train model
-    train(env, 400)
-    torch.save(policy_net, "dqn_pong_model")
-    policy_net = torch.load("dqn_pong_model")
+    # 这里本没有epo,我增加了
+    n_episodes = 1000
+    train(env, n_episodes)
+    save_model_name = "dqn_pong_model" + str(n_episodes)
+    torch.save(policy_net, save_model_name)
+    policy_net = torch.load(save_model_name)
     test(env, 1, policy_net, render=False)
 
