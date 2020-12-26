@@ -153,6 +153,10 @@ def test(env, n_episodes, policy, render=True):
     env.close()
     return
 
+############################################
+################## Main ####################
+############################################
+import sys
 if __name__ == '__main__':
     # set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -168,6 +172,9 @@ if __name__ == '__main__':
     lr = 1e-4
     INITIAL_MEMORY = 10000
     MEMORY_SIZE = 10 * INITIAL_MEMORY
+
+    # train episodes
+    N_EPISODES = 1000
 
     # create networks
     policy_net = DQN(n_actions=4).to(device)
@@ -187,11 +194,14 @@ if __name__ == '__main__':
     memory = ReplayMemory(MEMORY_SIZE)
     
     # train model
-    # 这里本没有epo,我增加了
-    n_episodes = 1000
-    train(env, n_episodes)
-    save_model_name = "dqn_pong_model" + str(n_episodes)
-    torch.save(policy_net, save_model_name)
-    policy_net = torch.load(save_model_name)
-    test(env, 1, policy_net, render=False)
+    save_model_name = "dqn_pong_model" + str(N_EPISODES)
+
+    if len(sys.argv) == 1 or sys.argv[1] == 'train':
+        train(env, N_EPISODES)    
+        torch.save(policy_net, save_model_name)
+    
+    
+    if len(sys.argv) == 1 or sys.argv[1] == 'test':
+        policy_net = torch.load(save_model_name)
+        test(env, 1, policy_net, render=False)
 
