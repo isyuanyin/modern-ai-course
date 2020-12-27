@@ -3,10 +3,13 @@ import numpy as np
 from ddqn_agent import DDQNAgent
 from utils import plot_learning_curve, make_env
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
+
+def train():
     env = make_env('PongNoFrameskip-v4')
     best_score = -np.inf
-    load_checkpoint = False
+    # load_checkpoint = False
+    load_checkpoint = True
     n_games = 100
     agent = DDQNAgent(gamma=0.99, epsilon=1.0, lr=0.0001,
                      input_dims=(env.observation_space.shape),
@@ -60,3 +63,8 @@ if __name__ == '__main__':
 
     x = [i+1 for i in range(len(scores))]
     plot_learning_curve(steps_array, scores, eps_history, figure_file)
+
+
+
+if __name__ == '__main__':
+    train()

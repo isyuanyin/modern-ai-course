@@ -122,8 +122,10 @@ def train(env, n_episodes, render=False):
     env.close()
     return
 
+import time
 def test(env, n_episodes, policy, render=True):
-    env = gym.wrappers.Monitor(env, './videos/' + 'dqn_pong_video')
+    dir_suffix = str(time.monotonic())
+    env = gym.wrappers.Monitor(env, './videos/' + dir_suffix)
     for episode in range(n_episodes):
         obs = env.reset()
         state = get_state(obs)
@@ -196,12 +198,12 @@ if __name__ == '__main__':
     # train model
     save_model_name = "dqn_pong_model" + str(N_EPISODES)
 
-    if len(sys.argv) == 1 or sys.argv[1] == 'train':
+    if len(sys.argv) >=2 and sys.argv[1] == 'train':
         train(env, N_EPISODES)    
         torch.save(policy_net, save_model_name)
     
     # test model
     if len(sys.argv) == 1 or sys.argv[1] == 'test':
         policy_net = torch.load(save_model_name)
-        test(env, 1, policy_net, render=False)
+        test(env, 1, policy_net, render=True)
 
