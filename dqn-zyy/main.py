@@ -200,7 +200,7 @@ if __name__ == '__main__':
         train(env, N_EPISODES)    
         torch.save(policy_net, save_model_name)
     
-    
+    # test model
     if len(sys.argv) == 1 or sys.argv[1] == 'test':
         policy_net = torch.load(save_model_name)
         test(env, 1, policy_net, render=False)
