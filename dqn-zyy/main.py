@@ -9,6 +9,7 @@ import time
 import gym
 
 from wrappers import *
+from utils import *
 from memory import ReplayMemory
 from models import *
 
@@ -18,9 +19,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torchvision.transforms as T
 
-Transition = namedtuple('Transion', 
-                        ('state', 'action', 'next_state', 'reward'))
-
+# 设置数据形式
+Transition = namedtuple('Transion', ('state', 'action', 'next_state', 'reward'))
 
 def select_action(state):
     global steps_done
@@ -85,9 +85,14 @@ def get_state(obs):
     return state.unsqueeze(0)
 
 def train(env, n_episodes, render=False):
+    mean_rewards = []
+    episode_reward = []
     for episode in range(n_episodes):
+
         obs = env.reset()
         state = get_state(obs)
+
+        # 记录 reward
         total_reward = 0.0
         for t in count():
             action = select_action(state)
@@ -98,7 +103,7 @@ def train(env, n_episodes, render=False):
             obs, reward, done, info = env.step(action)
 
             total_reward += reward
-
+            
             if not done:
                 next_state = get_state(obs)
             else:
@@ -117,9 +122,18 @@ def train(env, n_episodes, render=False):
 
             if done:
                 break
-        if episode % 20 == 0:
-                print('Total steps: {} \t Episode: {}/{} \t Total reward: {}'.format(steps_done, episode, t, total_reward))
+        if (episode+1) % 20 == 0:
+                print('Total steps: {} \t Episode: {}/{} \t Total reward: {}'.format(steps_done, episode+1, n_episodes, total_reward))
+        
+
+        # 计算平均 reward
+        episode_reward.append(total_reward)
+        mean_100ep_reward = round(np.mean(episode_reward[-100:]), 1)
+        mean_rewards.append(mean_100ep_reward)
+        
     env.close()
+    plot_learning_curve(mean_rewards, filename='reward'+str(n_episodes)+'.png' )
+    
     return
 
 import time
@@ -176,7 +190,7 @@ if __name__ == '__main__':
     MEMORY_SIZE = 10 * INITIAL_MEMORY
 
     # train episodes
-    N_EPISODES = 1000
+    N_EPISODES = 200
 
     # create networks
     policy_net = DQN(n_actions=4).to(device)
