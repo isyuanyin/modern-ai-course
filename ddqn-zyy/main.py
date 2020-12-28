@@ -17,7 +17,7 @@ from params import *
 class Environment:
     """Pong 游戏执行环境"""
 
-    def __init__(self, save_path='ddqn_pong_model'):
+    def __init__(self, save_path='pong_model'):
         self.env = gym.make("PongNoFrameskip-v4")
         self.env = make_env(self.env)
 
@@ -33,7 +33,6 @@ class Environment:
         """ 
         观察值转换成状态
         """
-
         state = np.array(obs)
         state = state.transpose((2, 0, 1))
         state = torch.from_numpy(state)
@@ -141,6 +140,8 @@ class Environment:
     def run(self, train_episodes, test_episodes, render=True):
         self.train(train_episodes)
         self.test(test_episodes, render)
+
+
 ############################################
 ################## Main ####################
 ############################################
@@ -150,6 +151,7 @@ if __name__ == '__main__':
 
     model_save_path = 'ddqn' + '_episode' +str(N_EPISODES) + '_lr' + str(lr) \
                         + '_batch' + str(BATCH_SIZE)
+    
     pong_env = Environment(model_save_path)
 
     if len(sys.argv) <= 1 or sys.argv[1] == 'run':
